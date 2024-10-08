@@ -1,105 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Do Not Wake Up the Emoji 2: Dreamland Adventure</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-family: 'Poppins', sans-serif;
-      color: #2c2c2c;
-      overflow: hidden;
-      background-color: #eaf7ff;
-    }
-    .top-bar {
-      width: 100%;
-      background-color: #ffffff;
-      padding: 3vh 0;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    .message {
-      font-size: 5vw;
-      font-weight: 600;
-    }
-    .emoji-container {
-      flex-grow: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-    .emoji {
-      font-size: 30vw;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
-    .emoji:hover {
-      transform: scale(1.2);
-    }
-    .dream-meter {
-      position: absolute;
-      bottom: 10vh;
-      width: 80%;
-      height: 4vh;
-      background-color: #ddd;
-      border-radius: 10px;
-    }
-    .dream-meter-fill {
-      height: 100%;
-      width: 100%;
-      background-color: #4caf50;
-      border-radius: 10px;
-      transition: width 0.5s ease;
-    }
-    .dream-world {
-      display: none;
-      text-align: center;
-      font-size: 4vw;
-      color: #666;
-      margin-top: 3vh;
-    }
-    .dream-world.active {
-      display: block;
-    }
-    .dream-worlds {
-      position: absolute;
-      top: 20vh;
-      text-align: center;
-    }
-    .candy, .space, .underwater, .haunted, .forest {
-      display: none;
-      text-align: center;
-      margin: 2vh 0;
-    }
-    .active-dream {
-      display: block;
-    }
-    .dream-token {
-      position: fixed;
-      top: 5vh;
-      right: 5vw;
-      font-size: 4vw;
-      background-color: gold;
-      padding: 1vh 2vw;
-      border-radius: 10px;
-      color: #fff;
-    }
-    .footer {
-      font-size: 3.5vw;
-      text-align: center;
-      color: #666;
-      padding: 2vh 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do Not Wake Up the Emoji 2: Dreamland Adventure</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            color: #2c2c2c;
+            overflow: hidden;
+            background-color: #eaf7ff;
+        }
+        .top-bar {
+            width: 100%;
+            background-color: #ffffff;
+            padding: 3vh 0;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .message {
+            font-size: 5vw;
+            font-weight: 600;
+        }
+        .emoji-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .emoji {
+            font-size: 30vw;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .emoji:hover {
+            transform: scale(1.2);
+        }
+        .dream-meter {
+            position: absolute;
+            bottom: 10vh;
+            width: 80%;
+            height: 4vh;
+            background-color: #ddd;
+            border-radius: 10px;
+        }
+        .dream-meter-fill {
+            height: 100%;
+            width: 100%;
+            background-color: #4caf50;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        .dream-world {
+            display: none;
+            text-align: center;
+            font-size: 4vw;
+            color: #666;
+            margin-top: 3vh;
+        }
+        .dream-world.active {
+            display: block;
+        }
+        .dream-worlds {
+            position: absolute;
+            top: 20vh;
+            text-align: center;
+        }
+        .candy, .space, .underwater, .haunted, .forest {
+            display: none;
+            text-align: center;
+            margin: 2vh 0;
+        }
+        .active-dream {
+            display: block;
+        }
+        .dream-token {
+            position: fixed;
+            bottom: 5vh;
+            left: 5vw;
+            font-size: 4vw;
+            background-color: gold;
+            padding: 1vh 2vw;
+            border-radius: 10px;
+            color: #fff;
+            z-index: 100;
+        }
+        .footer {
+            font-size: 3.5vw;
+            text-align: center;
+            color: #666;
+            padding: 2vh 0;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .dream-token {
+                font-size: 3.5vw;
+                padding: 1vh 3vw;
+                bottom: 3vh;
+                left: 3vw;
+            }
+            .message {
+                font-size: 6vw;
+            }
+            .emoji {
+                font-size: 35vw;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -255,3 +272,4 @@
 
 </body>
 </html>
+
