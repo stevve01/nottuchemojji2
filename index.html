@@ -286,6 +286,12 @@
       world.appendChild(obj);
     }
 
+    function collectDreamToken() {
+      dreamTokens++;
+      dreamTokenCount.textContent = `Токены: ${dreamTokens}`;
+      localStorage.setItem('dreamTokens', dreamTokens); // Сохранение токенов в localStorage
+    }
+
     function startObjectSpawning() {
       // Интервал появления объектов в зависимости от сложности
       if (gameInterval) clearInterval(gameInterval);
@@ -311,7 +317,15 @@
       }, 2000 / difficulty); // Скорость появления объектов зависит от сложности
     }
 
-    startObjectSpawning(); // Начать спаун объектов
+    // Восстановление состояния игры из localStorage при загрузке
+    window.onload = () => {
+      const savedTokens = localStorage.getItem('dreamTokens');
+      if (savedTokens) {
+        dreamTokens = parseInt(savedTokens, 10);
+        dreamTokenCount.textContent = `Токены: ${dreamTokens}`;
+      }
+      startObjectSpawning(); // Начать спаун объектов
+    };
 
   </script>
 
