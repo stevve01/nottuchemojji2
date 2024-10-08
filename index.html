@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Do Not Wake Up the Emoji 2: Dreamland Adventure</title>
+    <title>Не буди эмодзи 2: Приключение в мире снов</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
         html, body {
@@ -100,8 +100,21 @@
             color: #666;
             padding: 2vh 0;
         }
-
-        /* Mobile Optimization */
+        /* Day/Night background effect */
+        .day-night-cycle {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0);
+            z-index: -1;
+            transition: background-color 1s ease;
+        }
+        .night {
+            background-color: rgba(0, 0, 50, 0.5);
+        }
+        /* Mobile optimization */
         @media (max-width: 768px) {
             .dream-token {
                 font-size: 3.5vw;
@@ -121,7 +134,7 @@
 <body>
 
   <div class="top-bar">
-    <div class="message">Do Not Wake Up The Emoji 2: Dreamland Adventure</div>
+    <div class="message">Не буди эмодзи 2: Приключение в мире снов</div>
   </div>
 
   <div class="emoji-container">
@@ -131,41 +144,45 @@
     </div>
   </div>
 
-  <!-- Dream Worlds -->
+  <!-- Миры снов -->
   <div class="dream-worlds">
     <div class="dream-world candy active-dream" id="candyWorld">
-      🍬 Candyland Dream: Match 3 candy pieces to calm the emoji!
+      🍬 Сладкий сон: Собери 3 конфеты, чтобы успокоить эмодзи!
     </div>
     <div class="dream-world space" id="spaceWorld">
-      🌌 Space Dream: Click on asteroids to avoid them!
+      🌌 Космический сон: Кликни на астероиды, чтобы их избежать!
     </div>
     <div class="dream-world underwater" id="underwaterWorld">
-      🌊 Underwater Dream: Click on the waves to calm the seas!
+      🌊 Подводный сон: Кликни по волнам, чтобы успокоить моря!
     </div>
     <div class="dream-world haunted" id="hauntedWorld">
-      👻 Haunted Dream: Click to remove ghosts!
+      👻 Призрачный сон: Кликни, чтобы убрать привидений!
     </div>
     <div class="dream-world forest" id="forestWorld">
-      🌳 Forest Dream: Click to balance light and dark!
+      🌳 Лесной сон: Кликни, чтобы сбалансировать свет и тьму!
     </div>
   </div>
 
-  <!-- Dream Token Counter -->
-  <div class="dream-token" id="dreamTokenCount">Tokens: 0</div>
+  <!-- Счетчик токенов -->
+  <div class="dream-token" id="dreamTokenCount">Токены: 0</div>
 
-  <!-- Footer -->
+  <!-- Эффект день/ночь -->
+  <div class="day-night-cycle" id="dayNightCycle"></div>
+
+  <!-- Подвал -->
   <div class="footer">
-    Made by AndyGames.inc<br>
-    All rights reserved. <a href="#" style="color: #666;">Privacy Policy</a> | <a href="#" style="color: #666;">Terms of Service</a>
+    Сделано AndyGames.inc<br>
+    Все права защищены. <a href="#" style="color: #666;">Политика конфиденциальности</a> | <a href="#" style="color: #666;">Условия использования</a>
   </div>
 
   <script>
     let tapCount = 0;
-    let dreamControl = 100; // Start dream control meter at 100%
-    let dreamTokens = 0; // Dream Tokens counter
+    let dreamControl = 100; // Изначально показатель контроля сна 100%
+    let dreamTokens = 0; // Счетчик токенов сна
     const emoji = document.getElementById('sleepyEmoji');
     const dreamMeter = document.getElementById('dreamMeter');
     const dreamTokenCount = document.getElementById('dreamTokenCount');
+    const dayNightCycle = document.getElementById('dayNightCycle');
     const dreamWorlds = {
       candy: document.getElementById('candyWorld'),
       space: document.getElementById('spaceWorld'),
@@ -174,28 +191,31 @@
       forest: document.getElementById('forestWorld')
     };
 
+    let isNight = false; // Состояние день/ночь
+
     emoji.addEventListener('click', () => {
       tapCount++;
       handleDreamControl();
       changeDreamWorld();
       handleDreamInteractions();
+      toggleDayNightCycle();
     });
 
     function handleDreamControl() {
-      // Reduce dream control meter
+      // Уменьшить показатель контроля сна
       dreamControl -= 10;
       if (dreamControl < 0) dreamControl = 0;
       dreamMeter.style.width = dreamControl + '%';
 
-      // Check if the dream is too chaotic (bad ending condition)
+      // Проверка: если сон слишком хаотичный (условие для плохой концовки)
       if (dreamControl <= 0) {
-        alert("Oh no! The dream became too chaotic. The emoji woke up!");
+        alert("О нет! Сон стал слишком хаотичным. Эмодзи проснулся!");
         resetGame();
       }
     }
 
     function changeDreamWorld() {
-      // Change dream world every 20 taps
+      // Переход в другой мир сна каждые 20 нажатий
       if (tapCount === 20) {
         switchToDreamWorld('space');
       } else if (tapCount === 40) {
@@ -208,46 +228,46 @@
     }
 
     function switchToDreamWorld(world) {
-      // Hide all dream worlds
+      // Скрыть все миры снов
       for (let key in dreamWorlds) {
         dreamWorlds[key].classList.remove('active-dream');
       }
-      // Show the current dream world
+      // Показать текущий мир сна
       dreamWorlds[world].classList.add('active-dream');
     }
 
     function handleDreamInteractions() {
-      // Candyland Puzzle
+      // Сладкий сон
       if (tapCount <= 20) {
-        console.log("🍬 Match 3 candy pieces!");
+        console.log("🍬 Собери конфеты!");
         if (tapCount % 5 === 0) {
           collectDreamToken();
         }
       }
-      // Space Puzzle
+      // Космический сон
       if (tapCount > 20 && tapCount <= 40) {
-        console.log("🌌 Clicking asteroids to avoid them!");
+        console.log("🌌 Избегай астероидов!");
         if (tapCount % 7 === 0) {
           collectDreamToken();
         }
       }
-      // Underwater Puzzle
+      // Подводный сон
       if (tapCount > 40 && tapCount <= 60) {
-        console.log("🌊 Calming waves!");
+        console.log("🌊 Успокаивай волны!");
         if (tapCount % 6 === 0) {
           collectDreamToken();
         }
       }
-      // Haunted House Puzzle
+      // Призрачный сон
       if (tapCount > 60 && tapCount <= 80) {
-        console.log("👻 Removing ghosts!");
+        console.log("👻 Убирай привидений!");
         if (tapCount % 8 === 0) {
           collectDreamToken();
         }
       }
-      // Forest Puzzle
+      // Лесной сон
       if (tapCount > 80) {
-        console.log("🌳 Balancing light and dark!");
+        console.log("🌳 Балансируй свет и тьму!");
         if (tapCount % 9 === 0) {
           collectDreamToken();
         }
@@ -256,7 +276,15 @@
 
     function collectDreamToken() {
       dreamTokens++;
-      dreamTokenCount.textContent = `Tokens: ${dreamTokens}`;
+      dreamTokenCount.textContent = `Токены: ${dreamTokens}`;
+    }
+
+    function toggleDayNightCycle() {
+      // Переход между днем и ночью каждые 30 нажатий
+      if (tapCount % 30 === 0) {
+        isNight = !isNight;
+        dayNightCycle.classList.toggle('night', isNight);
+      }
     }
 
     function resetGame() {
@@ -265,11 +293,14 @@
       dreamTokens = 0;
       dreamMeter.style.width = '100%';
       emoji.textContent = '😴';
-      dreamTokenCount.textContent = 'Tokens: 0';
+      dreamTokenCount.textContent = 'Токены: 0';
       switchToDreamWorld('candy');
+      dayNightCycle.classList.remove('night');
+      isNight = false;
     }
   </script>
 
 </body>
 </html>
+
 
