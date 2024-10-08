@@ -45,6 +45,14 @@
         .emoji:hover {
             transform: scale(1.2);
         }
+        .interactive-object {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
         .dream-meter {
             position: absolute;
             bottom: 10vh;
@@ -68,19 +76,6 @@
             margin-top: 3vh;
         }
         .dream-world.active {
-            display: block;
-        }
-        .dream-worlds {
-            position: absolute;
-            top: 20vh;
-            text-align: center;
-        }
-        .candy, .space, .underwater, .haunted, .forest {
-            display: none;
-            text-align: center;
-            margin: 2vh 0;
-        }
-        .active-dream {
             display: block;
         }
         .dream-token {
@@ -147,7 +142,7 @@
   <!-- Миры снов -->
   <div class="dream-worlds">
     <div class="dream-world candy active-dream" id="candyWorld">
-      🍬 Сладкий сон: Собери 3 конфеты, чтобы успокоить эмодзи!
+      🍬 Сладкий сон: Собери конфеты, чтобы успокоить эмодзи!
     </div>
     <div class="dream-world space" id="spaceWorld">
       🌌 Космический сон: Кликни на астероиды, чтобы их избежать!
@@ -156,10 +151,13 @@
       🌊 Подводный сон: Кликни по волнам, чтобы успокоить моря!
     </div>
     <div class="dream-world haunted" id="hauntedWorld">
-      👻 Призрачный сон: Кликни, чтобы убрать привидений!
+      👻 Призрачный сон: Убери привидений!
     </div>
     <div class="dream-world forest" id="forestWorld">
-      🌳 Лесной сон: Кликни, чтобы сбалансировать свет и тьму!
+      🌳 Лесной сон: Сбалансируй свет и тьму!
+    </div>
+    <div class="dream-world nightmare" id="nightmareWorld">
+      😱 Кошмарный сон: Пройди финал! Сложность на максимум!
     </div>
   </div>
 
@@ -188,10 +186,13 @@
       space: document.getElementById('spaceWorld'),
       underwater: document.getElementById('underwaterWorld'),
       haunted: document.getElementById('hauntedWorld'),
-      forest: document.getElementById('forestWorld')
+      forest: document.getElementById('forestWorld'),
+      nightmare: document.getElementById('nightmareWorld')
     };
 
     let isNight = false; // Состояние день/ночь
+    let difficulty = 1;  // Начальная сложность
+    let gameInterval;
 
     emoji.addEventListener('click', () => {
       tapCount++;
@@ -203,7 +204,7 @@
 
     function handleDreamControl() {
       // Уменьшить показатель контроля сна
-      dreamControl -= 10;
+      dreamControl -= 10 / difficulty; // Сложность влияет на скорость уменьшения
       if (dreamControl < 0) dreamControl = 0;
       dreamMeter.style.width = dreamControl + '%';
 
@@ -215,15 +216,22 @@
     }
 
     function changeDreamWorld() {
-      // Переход в другой мир сна каждые 20 нажатий
+      // Переход в другой мир сна каждые 20 нажатий, увеличивается сложность
       if (tapCount === 20) {
         switchToDreamWorld('space');
+        difficulty = 1.5;
       } else if (tapCount === 40) {
         switchToDreamWorld('underwater');
+        difficulty = 2;
       } else if (tapCount === 60) {
         switchToDreamWorld('haunted');
+        difficulty = 2.5;
       } else if (tapCount === 80) {
         switchToDreamWorld('forest');
+        difficulty = 3;
+      } else if (tapCount === 100) {
+        switchToDreamWorld('nightmare');
+        difficulty = 1000000000; // Финальная сложность
       }
     }
 
@@ -237,46 +245,8 @@
     }
 
     function handleDreamInteractions() {
-      // Сладкий сон
-      if (tapCount <= 20) {
-        console.log("🍬 Собери конфеты!");
-        if (tapCount % 5 === 0) {
-          collectDreamToken();
-        }
-      }
-      // Космический сон
-      if (tapCount > 20 && tapCount <= 40) {
-        console.log("🌌 Избегай астероидов!");
-        if (tapCount % 7 === 0) {
-          collectDreamToken();
-        }
-      }
-      // Подводный сон
-      if (tapCount > 40 && tapCount <= 60) {
-        console.log("🌊 Успокаивай волны!");
-        if (tapCount % 6 === 0) {
-          collectDreamToken();
-        }
-      }
-      // Призрачный сон
-      if (tapCount > 60 && tapCount <= 80) {
-        console.log("👻 Убирай привидений!");
-        if (tapCount % 8 === 0) {
-          collectDreamToken();
-        }
-      }
-      // Лесной сон
-      if (tapCount > 80) {
-        console.log("🌳 Балансируй свет и тьму!");
-        if (tapCount % 9 === 0) {
-          collectDreamToken();
-        }
-      }
-    }
-
-    function collectDreamToken() {
-      dreamTokens++;
-      dreamTokenCount.textContent = `Токены: ${dreamTokens}`;
+      // Взаимодействие с объектами в каждом сне, увеличивающаяся сложность
+      // Взаимодействие с конфетами, астероидами и т.д. будет добавляться
     }
 
     function toggleDayNightCycle() {
@@ -291,6 +261,7 @@
       tapCount = 0;
       dreamControl = 100;
       dreamTokens = 0;
+      difficulty = 1; // Сброс сложности
       dreamMeter.style.width = '100%';
       emoji.textContent = '😴';
       dreamTokenCount.textContent = 'Токены: 0';
@@ -298,9 +269,54 @@
       dayNightCycle.classList.remove('night');
       isNight = false;
     }
+
+    // Добавление объектов в каждый мир сна с усложнением
+    function createInteractiveObject(world, type) {
+      const obj = document.createElement('div');
+      obj.className = 'interactive-object';
+      obj.style.backgroundImage = `url(${type})`;
+      obj.style.left = Math.random() * 80 + '%';
+      obj.style.top = Math.random() * 80 + '%';
+
+      obj.addEventListener('click', () => {
+        collectDreamToken();
+        obj.remove(); // Удалить объект после клика
+      });
+
+      world.appendChild(obj);
+    }
+
+    function startObjectSpawning() {
+      // Интервал появления объектов в зависимости от сложности
+      if (gameInterval) clearInterval(gameInterval);
+      gameInterval = setInterval(() => {
+        if (dreamWorlds.candy.classList.contains('active-dream')) {
+          createInteractiveObject(dreamWorlds.candy, 'candy.png');
+        }
+        if (dreamWorlds.space.classList.contains('active-dream')) {
+          createInteractiveObject(dreamWorlds.space, 'asteroid.png');
+        }
+        if (dreamWorlds.underwater.classList.contains('active-dream')) {
+          createInteractiveObject(dreamWorlds.underwater, 'wave.png');
+        }
+        if (dreamWorlds.haunted.classList.contains('active-dream')) {
+          createInteractiveObject(dreamWorlds.haunted, 'ghost.png');
+        }
+        if (dreamWorlds.forest.classList.contains('active-dream')) {
+          createInteractiveObject(dreamWorlds.forest, 'light-dark.png');
+        }
+        if (dreamWorlds.nightmare.classList.contains('active-dream')) {
+          createInteractiveObject(dreamWorlds.nightmare, 'nightmare-object.png');
+        }
+      }, 2000 / difficulty); // Скорость появления объектов зависит от сложности
+    }
+
+    startObjectSpawning(); // Начать спаун объектов
+
   </script>
 
 </body>
 </html>
+
 
 
