@@ -173,6 +173,11 @@
     Все права защищены. <a href="#" style="color: #666;">Политика конфиденциальности</a> | <a href="#" style="color: #666;">Условия использования</a>
   </div>
 
+  <!-- Звуковые эффекты -->
+  <audio id="clickSound" src="click-sound.mp3" preload="auto"></audio>
+  <audio id="switchSound" src="switch-sound.mp3" preload="auto"></audio>
+  <audio id="bonusSound" src="bonus-sound.mp3" preload="auto"></audio>
+
   <script>
     let tapCount = 0;
     let dreamControl = 100; // Изначально показатель контроля сна 100%
@@ -181,6 +186,9 @@
     const dreamMeter = document.getElementById('dreamMeter');
     const dreamTokenCount = document.getElementById('dreamTokenCount');
     const dayNightCycle = document.getElementById('dayNightCycle');
+    const clickSound = document.getElementById('clickSound');
+    const switchSound = document.getElementById('switchSound');
+    const bonusSound = document.getElementById('bonusSound');
     const dreamWorlds = {
       candy: document.getElementById('candyWorld'),
       space: document.getElementById('spaceWorld'),
@@ -196,6 +204,7 @@
 
     emoji.addEventListener('click', () => {
       tapCount++;
+      clickSound.play(); // Воспроизведение звука клика
       handleDreamControl();
       changeDreamWorld();
       handleDreamInteractions();
@@ -242,11 +251,15 @@
       }
       // Показать текущий мир сна
       dreamWorlds[world].classList.add('active-dream');
+      switchSound.play(); // Звук при смене мира
     }
 
     function handleDreamInteractions() {
       // Взаимодействие с объектами в каждом сне, увеличивающаяся сложность
-      // Взаимодействие с конфетами, астероидами и т.д. будет добавляться
+      // Случайные бонусы или препятствия
+      if (Math.random() < 0.1) { // 10% шанс появления бонусного объекта
+        createBonusObject();
+      }
     }
 
     function toggleDayNightCycle() {
@@ -280,14 +293,32 @@
 
       obj.addEventListener('click', () => {
         collectDreamToken();
+        clickSound.play(); // Звук при клике на объект
         obj.remove(); // Удалить объект после клика
       });
 
       world.appendChild(obj);
     }
 
-    function collectDreamToken() {
-      dreamTokens++;
+    // Создание бонусного объекта
+    function createBonusObject() {
+      const bonus = document.createElement('div');
+      bonus.className = 'interactive-object';
+      bonus.style.backgroundImage = `url('bonus.png')`;
+      bonus.style.left = Math.random() * 80 + '%';
+      bonus.style.top = Math.random() * 80 + '%';
+
+      bonus.addEventListener('click', () => {
+        collectDreamToken(10); // Бонус: 10 токенов
+        bonusSound.play(); // Звук бонуса
+        bonus.remove(); // Удалить бонус после клика
+      });
+
+      document.body.appendChild(bonus);
+    }
+
+    function collectDreamToken(amount = 1) {
+      dreamTokens += amount;
       dreamTokenCount.textContent = `Токены: ${dreamTokens}`;
       localStorage.setItem('dreamTokens', dreamTokens); // Сохранение токенов в localStorage
     }
@@ -331,6 +362,7 @@
 
 </body>
 </html>
+
 
 
 
