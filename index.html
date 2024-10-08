@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Do Not Wake Up the Emoji 2: Dreamland Adventure</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      color: #2c2c2c;
+      overflow: hidden;
+      background-color: #eaf7ff;
+    }
+    .top-bar {
+      width: 100%;
+      background-color: #ffffff;
+      padding: 3vh 0;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .message {
+      font-size: 5vw;
+      font-weight: 600;
+    }
+    .emoji-container {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .emoji {
+      font-size: 30vw;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .emoji:hover {
+      transform: scale(1.2);
+    }
+    .dream-meter {
+      position: absolute;
+      bottom: 10vh;
+      width: 80%;
+      height: 4vh;
+      background-color: #ddd;
+      border-radius: 10px;
+    }
+    .dream-meter-fill {
+      height: 100%;
+      width: 100%;
+      background-color: #4caf50;
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+    .dream-world {
+      display: none;
+      text-align: center;
+      font-size: 4vw;
+      color: #666;
+      margin-top: 3vh;
+    }
+    .dream-world.active {
+      display: block;
+    }
+    .dream-worlds {
+      position: absolute;
+      top: 20vh;
+      text-align: center;
+    }
+    .candy, .space, .underwater, .haunted, .forest {
+      display: none;
+      text-align: center;
+      margin: 2vh 0;
+    }
+    .active-dream {
+      display: block;
+    }
+    .dream-token {
+      position: fixed;
+      top: 5vh;
+      right: 5vw;
+      font-size: 4vw;
+      background-color: gold;
+      padding: 1vh 2vw;
+      border-radius: 10px;
+      color: #fff;
+    }
+    .footer {
+      font-size: 3.5vw;
+      text-align: center;
+      color: #666;
+      padding: 2vh 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="message">Do Not Wake Up The Emoji 2: Dreamland Adventure</div>
+  </div>
+
+  <div class="emoji-container">
+    <div class="emoji" id="sleepyEmoji">😴</div>
+    <div class="dream-meter">
+      <div class="dream-meter-fill" id="dreamMeter"></div>
+    </div>
+  </div>
+
+  <!-- Dream Worlds -->
+  <div class="dream-worlds">
+    <div class="dream-world candy active-dream" id="candyWorld">
+      🍬 Candyland Dream: Match 3 candy pieces to calm the emoji!
+    </div>
+    <div class="dream-world space" id="spaceWorld">
+      🌌 Space Dream: Click on asteroids to avoid them!
+    </div>
+    <div class="dream-world underwater" id="underwaterWorld">
+      🌊 Underwater Dream: Click on the waves to calm the seas!
+    </div>
+    <div class="dream-world haunted" id="hauntedWorld">
+      👻 Haunted Dream: Click to remove ghosts!
+    </div>
+    <div class="dream-world forest" id="forestWorld">
+      🌳 Forest Dream: Click to balance light and dark!
+    </div>
+  </div>
+
+  <!-- Dream Token Counter -->
+  <div class="dream-token" id="dreamTokenCount">Tokens: 0</div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Made by AndyGames.inc<br>
+    All rights reserved. <a href="#" style="color: #666;">Privacy Policy</a> | <a href="#" style="color: #666;">Terms of Service</a>
+  </div>
+
+  <script>
+    let tapCount = 0;
+    let dreamControl = 100; // Start dream control meter at 100%
+    let dreamTokens = 0; // Dream Tokens counter
+    const emoji = document.getElementById('sleepyEmoji');
+    const dreamMeter = document.getElementById('dreamMeter');
+    const dreamTokenCount = document.getElementById('dreamTokenCount');
+    const dreamWorlds = {
+      candy: document.getElementById('candyWorld'),
+      space: document.getElementById('spaceWorld'),
+      underwater: document.getElementById('underwaterWorld'),
+      haunted: document.getElementById('hauntedWorld'),
+      forest: document.getElementById('forestWorld')
+    };
+
+    emoji.addEventListener('click', () => {
+      tapCount++;
+      handleDreamControl();
+      changeDreamWorld();
+      handleDreamInteractions();
+    });
+
+    function handleDreamControl() {
+      // Reduce dream control meter
+      dreamControl -= 10;
+      if (dreamControl < 0) dreamControl = 0;
+      dreamMeter.style.width = dreamControl + '%';
+
+      // Check if the dream is too chaotic (bad ending condition)
+      if (dreamControl <= 0) {
+        alert("Oh no! The dream became too chaotic. The emoji woke up!");
+        resetGame();
+      }
+    }
+
+    function changeDreamWorld() {
+      // Change dream world every 20 taps
+      if (tapCount === 20) {
+        switchToDreamWorld('space');
+      } else if (tapCount === 40) {
+        switchToDreamWorld('underwater');
+      } else if (tapCount === 60) {
+        switchToDreamWorld('haunted');
+      } else if (tapCount === 80) {
+        switchToDreamWorld('forest');
+      }
+    }
+
+    function switchToDreamWorld(world) {
+      // Hide all dream worlds
+      for (let key in dreamWorlds) {
+        dreamWorlds[key].classList.remove('active-dream');
+      }
+      // Show the current dream world
+      dreamWorlds[world].classList.add('active-dream');
+    }
+
+    function handleDreamInteractions() {
+      // Candyland Puzzle
+      if (tapCount <= 20) {
+        console.log("🍬 Match 3 candy pieces!");
+        if (tapCount % 5 === 0) {
+          collectDreamToken();
+        }
+      }
+      // Space Puzzle
+      if (tapCount > 20 && tapCount <= 40) {
+        console.log("🌌 Clicking asteroids to avoid them!");
+        if (tapCount % 7 === 0) {
+          collectDreamToken();
+        }
+      }
+      // Underwater Puzzle
+      if (tapCount > 40 && tapCount <= 60) {
+        console.log("🌊 Calming waves!");
+        if (tapCount % 6 === 0) {
+          collectDreamToken();
+        }
+      }
+      // Haunted House Puzzle
+      if (tapCount > 60 && tapCount <= 80) {
+        console.log("👻 Removing ghosts!");
+        if (tapCount % 8 === 0) {
+          collectDreamToken();
+        }
+      }
+      // Forest Puzzle
+      if (tapCount > 80) {
+        console.log("🌳 Balancing light and dark!");
+        if (tapCount % 9 === 0) {
+          collectDreamToken();
+        }
+      }
+    }
+
+    function collectDreamToken() {
+      dreamTokens++;
+      dreamTokenCount.textContent = `Tokens: ${dreamTokens}`;
+    }
+
+    function resetGame() {
+      tapCount = 0;
+      dreamControl = 100;
+      dreamTokens = 0;
+      dreamMeter.style.width = '100%';
+      emoji.textContent = '😴';
+      dreamTokenCount.textContent = 'Tokens: 0';
+      switchToDreamWorld('candy');
+    }
+  </script>
+
+</body>
+</html>
